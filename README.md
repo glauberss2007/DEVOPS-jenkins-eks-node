@@ -28,6 +28,8 @@ sudo mv /tmp/eksctl /usr/local/bin
 
 Check version:
 ```
+Ps: 
+
 eksctl version
 ```
 
@@ -69,6 +71,8 @@ Extract the aws cli bundle setup
 Configure the AWS CLI on Ubuntu
 ```
 sudo ./aws/install
+Ps: 
+
 ```
 
 Verify the AWS CLI version
@@ -105,5 +109,44 @@ After CLI configuration use the follow command to create an EKS with 2 nodes at 
 ```
 eksctl create cluster --name demo-ekscluster --region ap-south-1 --version 1.21 --nodegroup-name linux-nodes --node-type t2.micro --nodes 2
 ```
+
+### Jenkins configuration
+
+The plugins necessary to be installed on jenkis are "NODEJS". To install it access "Dashboard" -> "Manage Jenkins" -> Plugins
+After isntallation go to "Dashboard" -> "Manage Jenkins" -> "Tools" -> "Add NodeJS" and fill the form with the name.
+
+Them go to the repository that will be used and check the presence of necessary files. 
+PS: This repository is an example and contains the necessary files such as "jenkinsfile", 
+
+After repositore creation and files presented on it, example jenkins file and example dockerfile, go to jenkins dashboard and click on "Manage Jenkins -> Credentials -> System -> Global credentials":
+```
+Kind: Username with password
+Scope: Global
+Username: ***
+Password: ***
+ID: GITHUB_CREDENTIALS
+```
+
+### Pipeline creation
+Acdess the jenkins and go to Dashboard -> New Item and provide a name to this pipe (aws eks), afetr that select github project and provide url of your repository.
+
+Click on pipeline syntax and select "withCredentials: Bind credentials to variables" and them "Add" -> "Secret Text". The credential used here is the one presented in the docker image deploy stage of jenkinsfile. Copy the content of jenkinsfile to jenkins pipeline script:
+
+![image](https://github.com/glauberss2007/devops-jenkins-eks-node/assets/22028539/3b023abe-8421-4221-b415-fbb8fd2e104a)
+
+Then buil it to check the preogress:
+![image](https://github.com/glauberss2007/devops-jenkins-eks-node/assets/22028539/ff0f3996-1431-4d52-82e4-7af093d7cf54)
+
+PS: In ths jenkisfile example we consider that the jenkins server already has "aws configure" setuped and docker installed.
+
+Confirm that the pod is already running by using kubectl:
+```
+kubectl get pods
+```
+
+References: 
+- https://www.jenkins.io/doc/book/installing/
+- https://medium.com/@raj10x/configure-local-kubectl-to-access-remote-kubernetes-cluster-ee78feff2d6d
+
 
 
